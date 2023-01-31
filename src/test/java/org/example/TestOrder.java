@@ -47,28 +47,22 @@ public class TestOrder {
         homePageScooter.clickButtonCookie();
         homePageScooter.clickButtonOrder(orderButton);
         PersonalDataPage orderFillingPage = new PersonalDataPage(driver);
-        orderFillingPage.fillingFirstName("Илья");
-        orderFillingPage.fillingLastName("Макаров");
-        orderFillingPage.fillingAddress("Москва");
-        orderFillingPage.fillingSubwayStation();
-        orderFillingPage.fillingPhoneNumber("+79250705166");
+        orderFillingPage.fillingPersonalDataPage("Илья","Макаров", "Москва", "+79250705166");
         orderFillingPage.clickButtonNext();
         RentDataPage rentDataPage = new RentDataPage(driver);
-        rentDataPage.fillingDate();
-        rentDataPage.fillingRentalPeriod();
-        rentDataPage.fillingScooterColor();
-        rentDataPage.fillingComment("Хочу самокат");
+        rentDataPage.fillingRentDataPage("Хочу самокат");
         rentDataPage.clickOrderButton();
         rentDataPage.clickAcceptOrderButton();
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         wait.until(ExpectedConditions.visibilityOfElementLocated(SUCCESSFUL_ORDER_WINDOW));
         String textOrder = driver.findElement(SUCCESSFUL_ORDER_WINDOW).getText();
         MatcherAssert.assertThat(textOrder, containsString("Заказ оформлен"));
-        rentDataPage.clickCheckOrderButton();
     }
 
     @After
     public void teardown() {
+        RentDataPage rentDataPage = new RentDataPage(driver);
+        rentDataPage.clickCheckOrderButton();
         driver.quit();
     }
 }

@@ -4,13 +4,9 @@ import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
 import java.util.Objects;
 
 import static org.junit.Assert.assertEquals;
@@ -18,14 +14,13 @@ import static org.junit.Assert.assertEquals;
 @RunWith(Parameterized.class)
 public class TestFAQ {
     private static final String URL = "https://qa-scooter.praktikum-services.ru/"; // URL сайта
-    private static final String QUESTIONS = "@aria-labelledby='accordion__heading-"; // Поля вопросов
-    private final int numQuestion;
-    private final String responseText;
+    private final String answerText;
+    private final int numberQuestion;
     private final boolean expected;
 
-    public TestFAQ(int numQuestion, String responseText, boolean expected) {
-        this.numQuestion = numQuestion;
-        this.responseText = responseText;
+    public TestFAQ(int numberQuestion, String answerText, boolean expected) {
+        this.numberQuestion = numberQuestion;
+        this.answerText = answerText;
         this.expected = expected;
     }
 
@@ -51,12 +46,11 @@ public class TestFAQ {
         HomePageScooter homePageScooter = new HomePageScooter(driver);
         homePageScooter.clickButtonCookie();
         homePageScooter.scrollToFAQ();
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("accordion__heading-" + numQuestion))); // Кнопки вопросов
-        homePageScooter.clickQuestionButton(numQuestion);
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[" + QUESTIONS + numQuestion + "']")));
-        String actual = driver.findElement(By.xpath("//*[" + QUESTIONS + numQuestion + "']")).getText();
-        assertEquals(expected, Objects.equals(actual, responseText));
+        for (int i = 0; i < 7; i++) {
+            homePageScooter.clickButtonFAQ(numberQuestion);
+            String actual = homePageScooter.getTextAnswerFAQ(numberQuestion);
+            assertEquals(expected, Objects.equals(actual, answerText));
+        }
     }
 
     @After
